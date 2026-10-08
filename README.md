@@ -29,4 +29,4 @@ Dica: aproxime até as barras preencherem o quadro; se a imagem ficar tremida, a
 Tópico aleatório no ntfy.sh (serviço público, sem conta), identificado só pelo código de 6 letras.
 Só o número do chip trafega.
 
-Versão 2.2.
+Versão 2.3.

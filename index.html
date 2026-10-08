@@ -63,11 +63,18 @@ body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.45 var(-
 .guide.qr::before { display: none; }
 .cam.flash { box-shadow: 0 0 0 4px var(--ok) inset; }
 .camstatus { position: absolute; left: 0; right: 0; bottom: 0; padding: 8px 12px; font-size: 0.85rem; color: #fff; background: linear-gradient(transparent, rgba(0,0,0,0.7)); }
+.ic { width: 1.15em; height: 1.15em; vertical-align: -0.2em; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+button .ic { margin-right: 6px; }
+button.icon-only { padding: 8px; line-height: 0; } button.icon-only .ic { margin: 0; width: 1.3em; height: 1.3em; }
 .camtools { position: absolute; top: 8px; right: 8px; display: flex; gap: 6px; }
-.camtools button { padding: 6px 10px; font-size: 0.85rem; background: rgba(0,0,0,0.55); color: #fff; border-color: rgba(255,255,255,0.35); }
-.camtools button[aria-pressed="true"] { background: var(--brand-bright); border-color: var(--brand-bright); }
-.zoomrow { display: flex; align-items: center; gap: 10px; margin-top: 8px; font-size: 0.85rem; color: var(--muted); }
-.zoomrow input[type="range"] { flex: 1; accent-color: var(--brand-bright); }
+.camtools button { width: 40px; height: 40px; padding: 0; border-radius: 50%; display: grid; place-items: center; background: rgba(0,0,0,0.55); color: #fff; border-color: rgba(255,255,255,0.35); backdrop-filter: blur(4px); }
+.camtools button .ic { margin: 0; width: 20px; height: 20px; }
+.camtools button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #1f2937; }
+/* zoom como no app de câmera: 1× 2× 3× sobre a imagem, acima da legenda */
+.zoomchips { position: absolute; left: 50%; transform: translateX(-50%); bottom: 44px; display: flex; gap: 4px; padding: 4px; border-radius: 999px; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); }
+.zoomchips button { min-width: 38px; height: 30px; padding: 0 8px; border-radius: 999px; border: 0; background: transparent; color: #fff; font-size: 0.85rem; font-weight: 700; }
+.zoomchips button[aria-pressed="true"] { background: #fff; color: var(--brand-deep); }
+.zoomchips button:hover { border: 0; }
 
 .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-top: 10px; }
 .row label { font-size: 0.85rem; color: var(--muted); }
@@ -137,6 +144,7 @@ kbd { font-family: var(--mono); font-size: 0.85em; padding: 1px 5px; border: 1px
 .conn.on { background: var(--ok-bg); border-color: #b7dfc3; } .conn.on .ico { background: var(--ok); } .conn.on .ttl { color: var(--ok); }
 .conn.wait { background: var(--warn-bg); border-color: #efd99a; } .conn.wait .ico { background: var(--accent); }
 .conn.err { background: var(--bad-bg); border-color: #f1c2c5; } .conn.err .ico { background: var(--bad); }
+.conn > div:nth-child(2) { flex: 1 1 180px; min-width: 0; }
 .conn .act { margin-left: auto; }
 .conn.pulse { animation: pulse 1.2s ease-out 1; }
 @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(31,122,58,0.45); } 100% { box-shadow: 0 0 0 14px rgba(31,122,58,0); } }
@@ -144,17 +152,31 @@ kbd { font-family: var(--mono); font-size: 0.85em; padding: 1px 5px; border: 1px
 .howto .ttl { font-weight: 700; color: var(--brand); margin-bottom: 4px; }
 .howto ol { margin: 0; padding-left: 1.2em; }
 .howto li { margin: 3px 0; }
-@media (max-width: 520px) { .conn { flex-wrap: wrap; } .conn .act { margin-left: 52px; } }
+@media (max-width: 520px) { .conn { flex-wrap: wrap; } .conn .act { margin-left: 52px; flex: none; } }
 @media (prefers-reduced-motion: reduce) { .toast { transition: none; } .conn.pulse { animation: none; } }
 </style>
 </head>
 <body>
 <div class="top"><div class="in">
-  <svg class="logo" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="rgba(255,255,255,0.12)"/><rect x="7" y="10" width="2" height="12" fill="#fff"/><rect x="11" y="10" width="3" height="12" fill="#fff"/><rect x="16" y="10" width="2" height="12" fill="#fff"/><rect x="20" y="10" width="1.5" height="12" fill="#fff"/><rect x="23" y="10" width="3" height="12" fill="#fff"/></svg>
+  <svg class="logo" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="rgba(255,255,255,0.14)"/><path d="M8 11h3l1.5-2.5h7L21 11h3a1.5 1.5 0 0 1 1.5 1.5V22A1.5 1.5 0 0 1 24 23.5H8A1.5 1.5 0 0 1 6.5 22v-9.5A1.5 1.5 0 0 1 8 11z" fill="none" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/><rect x="11" y="14" width="1.4" height="6" fill="#fff"/><rect x="13.6" y="14" width="2" height="6" fill="#fff"/><rect x="16.8" y="14" width="1.2" height="6" fill="#fff"/><rect x="19.2" y="14" width="2.2" height="6" fill="#fff"/></svg>
   <span class="app">Leitor de Microchip</span>
-  <span class="right" id="ver">v2.2</span>
+  <span class="right" id="ver">v2.3</span>
 </div></div>
 
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-camera" viewBox="0 0 24 24"><path d="M4 8h3l1.5-2.5h7L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.5"/></symbol>
+  <symbol id="i-pause" viewBox="0 0 24 24"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></symbol>
+  <symbol id="i-flash" viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></symbol>
+  <symbol id="i-flip" viewBox="0 0 24 24"><path d="M4 8h3l1.5-2.5h7L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><path d="M9.5 13a2.5 2.5 0 0 1 4.3-1.8M14.5 13a2.5 2.5 0 0 1-4.3 1.8"/><path d="M14 9.5v2h-2M10 16.5v-2h2"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.3-5.7"/><path d="M20 4v5h-5"/></symbol>
+  <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1.5 1.5"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1.5-1.5"/></symbol>
+  <symbol id="i-unlink" viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1.5 1.5"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1.5-1.5"/><path d="M4 4l16 16"/></symbol>
+  <symbol id="i-qr" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14v3M17 20h4M14 20h1"/></symbol>
+  <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-8 8"/></symbol>
+  <symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="12" r="4"/><path d="M12 12h9M18 12v3M15 12v2"/></symbol>
+</svg>
 <div class="wrap">
   <div class="tabs" role="tablist" id="tabs">
     <button class="tab" role="tab" id="tabPc" aria-selected="true" type="button">Câmera deste computador</button>
@@ -169,15 +191,15 @@ kbd { font-family: var(--mono); font-size: 0.85em; padding: 1px 5px; border: 1px
       <div class="cam" id="cam">
         <video id="video" playsinline muted autoplay></video>
         <div class="guide" id="guide" aria-hidden="true"></div>
+        <div class="zoomchips" id="zoomChips" hidden></div>
         <div class="camtools" id="camtools"></div>
         <div class="camstatus" id="camstatus">Iniciando câmera…</div>
       </div>
-      <div class="zoomrow" id="zoomrow" hidden><label for="zoom">Zoom</label><input id="zoom" type="range" min="1" max="1" step="0.1" value="1"><span id="zoomv">1×</span></div>
-      <div class="row">
+            <div class="row">
         <label for="camsel">Câmera</label>
         <select id="camsel" aria-label="Escolher câmera"></select>
-        <button id="btnStart" class="primary" type="button">Ligar</button>
-        <button id="btnStop" class="ghost" type="button" disabled>Pausar</button>
+        <button id="btnStart" class="primary" type="button"><svg class="ic" aria-hidden="true"><use href="#i-camera"/></svg>Ligar</button>
+        <button id="btnStop" class="ghost" type="button" disabled><svg class="ic" aria-hidden="true"><use href="#i-pause"/></svg>Pausar</button>
       </div>
       <div class="row">
         <label for="keep">Dígitos a copiar (últimos)</label>
@@ -207,8 +229,8 @@ kbd { font-family: var(--mono); font-size: 0.85em; padding: 1px 5px; border: 1px
       <div><span class="state idle" id="state">Aguardando uma etiqueta</span></div>
       <div class="detail" id="detail"></div>
       <div class="row">
-        <button id="btnCopy" class="primary" type="button" disabled>Copiar de novo</button>
-        <button id="btnClear" class="ghost" type="button" disabled>Limpar histórico de hoje</button>
+        <button id="btnCopy" class="primary" type="button" disabled><svg class="ic" aria-hidden="true"><use href="#i-copy"/></svg>Copiar de novo</button>
+        <button id="btnClear" class="ghost" type="button" disabled><svg class="ic" aria-hidden="true"><use href="#i-trash"/></svg>Limpar histórico de hoje</button>
       </div>
       <h2 style="margin-top:8px">Lidos hoje</h2>
       <ul class="hist" id="hist"></ul>
@@ -220,7 +242,7 @@ kbd { font-family: var(--mono); font-size: 0.85em; padding: 1px 5px; border: 1px
   <div class="grid" id="viewPhonePc" hidden>
     <section class="panel">
       <h2>Vincular um celular</h2>
-      <div class="conn" id="pcConn"><div class="ico">…</div><div><div class="ttl" id="pcConnTtl">Aguardando o celular</div><div class="sub" id="pcConnSub">Leia o QR abaixo com o celular.</div></div><button class="ghost act" id="btnShowQr" type="button" hidden>Mostrar QR de novo</button></div>
+      <div class="conn" id="pcConn"><div class="ico">…</div><div><div class="ttl" id="pcConnTtl">Aguardando o celular</div><div class="sub" id="pcConnSub">Leia o QR abaixo com o celular.</div></div><button class="ghost act" id="btnShowQr" type="button" hidden><svg class="ic" aria-hidden="true"><use href="#i-qr"/></svg>Mostrar QR</button></div>
       <div class="pair" id="pairBox" style="margin-top:14px">
         <div class="qr" id="qr"></div>
         <div>
@@ -231,7 +253,7 @@ kbd { font-family: var(--mono); font-size: 0.85em; padding: 1px 5px; border: 1px
             <li>Quando aparecer <b>Conexão concluída</b>, cada etiqueta lida no celular chega aqui já copiada.</li>
           </ol>
           <div class="row">
-            <button id="btnNewCode" class="ghost" type="button">Gerar novo código</button>
+            <button id="btnNewCode" class="ghost" type="button"><svg class="ic" aria-hidden="true"><use href="#i-refresh"/></svg>Gerar novo código</button>
           </div>
         </div>
       </div>
@@ -250,7 +272,7 @@ kbd { font-family: var(--mono); font-size: 0.85em; padding: 1px 5px; border: 1px
       <div><span class="state idle" id="state2">Aguardando uma etiqueta</span></div>
       <div class="detail" id="detail2"></div>
       <div class="row">
-        <button id="btnCopy2" class="primary" type="button" disabled>Copiar de novo</button>
+        <button id="btnCopy2" class="primary" type="button" disabled><svg class="ic" aria-hidden="true"><use href="#i-copy"/></svg>Copiar de novo</button>
       </div>
       <h2 style="margin-top:8px">Lidos hoje</h2>
       <ul class="hist" id="hist2"></ul>
@@ -265,19 +287,19 @@ kbd { font-family: var(--mono); font-size: 0.85em; padding: 1px 5px; border: 1px
       <div id="noCamWhy" class="detail" style="margin-bottom:10px"></div>
       <ol class="steps" id="noCamSteps"></ol>
       <div class="row">
-        <button id="btnRetryCam" class="primary" type="button">Tentar de novo</button>
+        <button id="btnRetryCam" class="primary" type="button"><svg class="ic" aria-hidden="true"><use href="#i-refresh"/></svg>Tentar de novo</button>
       </div>
     </section>
-    <div class="conn" id="mConn"><div class="ico">1</div><div><div class="ttl" id="mConnTtl">Conectar ao PC</div><div class="sub" id="mConnSub">Aponte a câmera para o QR que está na tela do PC.</div></div><button class="ghost act" id="btnUnpair" type="button" hidden>Desvincular</button></div>
+    <div class="conn" id="mConn"><div class="ico">1</div><div><div class="ttl" id="mConnTtl">Conectar ao PC</div><div class="sub" id="mConnSub">Aponte a câmera para o QR que está na tela do PC.</div></div><button class="ghost act" id="btnUnpair" type="button" hidden><svg class="ic" aria-hidden="true"><use href="#i-unlink"/></svg>Desvincular</button></div>
     <section class="panel">
       <div class="cam" id="mcam">
         <video id="mvideo" playsinline muted autoplay></video>
         <div class="guide qr" id="mguide" aria-hidden="true"></div>
+        <div class="zoomchips" id="mzoomChips" hidden></div>
         <div class="camtools" id="mcamtools"></div>
         <div class="camstatus" id="mcamstatus">Iniciando câmera…</div>
       </div>
-      <div class="zoomrow" id="mzoomrow" hidden><label for="mzoom">Zoom</label><input id="mzoom" type="range" min="1" max="1" step="0.1" value="1"><span id="mzoomv">1×</span></div>
-      <div class="howto" id="mHowto" style="margin-top:12px">
+            <div class="howto" id="mHowto" style="margin-top:12px">
         <div class="ttl">Como conectar</div>
         <ol>
           <li>No PC, abra este mesmo link e clique na aba <b>Celular como leitor</b>.</li>
@@ -288,12 +310,12 @@ kbd { font-family: var(--mono); font-size: 0.85em; padding: 1px 5px; border: 1px
       <div class="row" id="mPairRow">
         <label for="mcode">Código do PC</label>
         <input id="mcode" type="text" inputmode="latin" autocapitalize="characters" maxlength="6" style="width:8.5em; font-family: var(--mono); letter-spacing: 0.2em; text-transform: uppercase" placeholder="ABC123">
-        <button id="btnPair" class="primary" type="button">Conectar</button>
+        <button id="btnPair" class="primary" type="button"><svg class="ic" aria-hidden="true"><use href="#i-link"/></svg>Conectar</button>
       </div>
       <div class="row">
         <label for="mcamsel">Câmera</label>
         <select id="mcamsel" aria-label="Escolher câmera"></select>
-        <button id="mbtnStart" class="ghost" type="button">Religar câmera</button>
+        <button id="mbtnStart" class="ghost" type="button"><svg class="ic" aria-hidden="true"><use href="#i-camera"/></svg>Religar câmera</button>
       </div>
     </section>
     <section class="panel reading">
@@ -2823,23 +2845,53 @@ var qrcode = function() {
       })();
     });
   }
-  // zoom, foco e lanterna: só aparecem quando a câmera suporta
-  function setupTrackTools(tr, ui) {
+  // zoom, foco, lanterna e troca de câmera: só aparecem quando a câmera suporta
+  function iconBtn(sym, label, pressed) {
+    var b = document.createElement('button'); b.type = 'button'; b.title = label; b.setAttribute('aria-label', label);
+    if (pressed !== undefined) b.setAttribute('aria-pressed', String(pressed));
+    b.innerHTML = '<svg class="ic" aria-hidden="true"><use href="#' + sym + '"/></svg>';
+    return b;
+  }
+  function zoomLevels(z) { // 1×, 2×, 3×… dentro do que a câmera permite (no máximo 5 botões)
+    var min = Math.max(1, Math.ceil(z.min * 10) / 10), max = z.max, out = [];
+    for (var v = Math.ceil(min); v <= Math.floor(max) && out.length < 5; v++) out.push(v);
+    if (!out.length || out[0] > min + 0.05) out.unshift(min);
+    if (out.length === 1 && max > min) out.push(Math.round(max * 10) / 10);
+    return out;
+  }
+  function setupTrackTools(tr, ui, sel, restart) {
     var caps = {}; try { caps = tr.getCapabilities ? tr.getCapabilities() : {}; } catch (e) {}
     var adv = [];
     if (caps.focusMode && caps.focusMode.indexOf('continuous') >= 0) adv.push({ focusMode: 'continuous' });
-    ui.tools.innerHTML = '';
+    ui.tools.innerHTML = ''; ui.chips.innerHTML = ''; ui.chips.hidden = true;
     if (caps.zoom && caps.zoom.max > caps.zoom.min) {
+      var levels = zoomLevels(caps.zoom);
       var z = lsGet('lmc_zoom', isMobile ? 2 : 1);
       z = Math.min(caps.zoom.max, Math.max(caps.zoom.min, z));
-      ui.zoomRow.hidden = false; ui.zoom.min = caps.zoom.min; ui.zoom.max = caps.zoom.max; ui.zoom.step = caps.zoom.step || 0.1; ui.zoom.value = z; ui.zoomV.textContent = (+z).toFixed(1).replace(/\.0$/, '') + '×';
-      adv.push({ zoom: z });
-      ui.zoom.oninput = function () { var v = +ui.zoom.value; ui.zoomV.textContent = v.toFixed(1).replace(/\.0$/, '') + '×'; lsSet('lmc_zoom', v); tr.applyConstraints({ advanced: [{ zoom: v }] }).catch(function () {}); };
-    } else { ui.zoomRow.hidden = true; }
+      // escolhe o nível mais próximo do salvo
+      var cur = levels.reduce(function (a, b) { return Math.abs(b - z) < Math.abs(a - z) ? b : a; }, levels[0]);
+      levels.forEach(function (lv) {
+        var b = document.createElement('button'); b.type = 'button'; b.textContent = (String(lv).length > 3 ? lv.toFixed(1) : lv) + '×';
+        b.setAttribute('aria-pressed', String(lv === cur)); b.setAttribute('aria-label', 'Zoom ' + lv + 'x');
+        b.addEventListener('click', function () {
+          Array.prototype.forEach.call(ui.chips.children, function (c) { c.setAttribute('aria-pressed', 'false'); });
+          b.setAttribute('aria-pressed', 'true'); lsSet('lmc_zoom', lv);
+          tr.applyConstraints({ advanced: [{ zoom: lv }] }).catch(function () {});
+        });
+        ui.chips.appendChild(b);
+      });
+      ui.chips.hidden = false;
+      adv.push({ zoom: cur });
+    }
     if (caps.torch) {
-      var b = document.createElement('button'); b.type = 'button'; b.textContent = 'Lanterna'; b.setAttribute('aria-pressed', 'false');
-      b.addEventListener('click', function () { var on = b.getAttribute('aria-pressed') !== 'true'; b.setAttribute('aria-pressed', String(on)); tr.applyConstraints({ advanced: [{ torch: on }] }).catch(function () {}); });
-      ui.tools.appendChild(b);
+      var t = iconBtn('i-flash', 'Lanterna', false);
+      t.addEventListener('click', function () { var on = t.getAttribute('aria-pressed') !== 'true'; t.setAttribute('aria-pressed', String(on)); tr.applyConstraints({ advanced: [{ torch: on }] }).catch(function () {}); });
+      ui.tools.appendChild(t);
+    }
+    if (sel && sel.options.length > 1) {
+      var f = iconBtn('i-flip', 'Trocar câmera');
+      f.addEventListener('click', function () { sel.selectedIndex = (sel.selectedIndex + 1) % sel.options.length; lsSet('lmc_cam', sel.value); restart(); });
+      ui.tools.appendChild(f);
     }
     if (adv.length) tr.applyConstraints({ advanced: adv }).catch(function () {
       // alguns aparelhos recusam o pacote inteiro; tenta um por um
@@ -2863,7 +2915,6 @@ var qrcode = function() {
       return waitForFrames(videoEl, seq);
     }).then(function () {
       running = true;
-      if (track && ui) setupTrackTools(track, ui);
       var startedAt = Date.now(), lastHit = Date.now(), tip = 0, busy = false;
       setCamStatus(TIPS[0]);
       (function loop() {
@@ -2884,7 +2935,10 @@ var qrcode = function() {
         loopTimer = setTimeout(loop, 110);
       })();
       return listCameras(sel, id);
-    }).then(function () { if (sel.value) lsSet('lmc_cam', sel.value); })
+    }).then(function () {
+      if (sel.value) lsSet('lmc_cam', sel.value);
+      if (track && ui && seq === startSeq) setupTrackTools(track, ui, sel, ui.restart);
+    })
     .catch(function (e) {
       if (e && e.message === 'cancelado') throw e;
       var name = e && e.name ? e.name : '';
@@ -2904,7 +2958,7 @@ var qrcode = function() {
 
   // --- modo PC: câmera do computador ---
   var btnStart = $('btnStart'), btnStop = $('btnStop'), camsel = $('camsel');
-  var pcUi = { tools: $('camtools'), zoomRow: $('zoomrow'), zoom: $('zoom'), zoomV: $('zoomv') };
+  var pcUi = { tools: $('camtools'), chips: $('zoomChips'), restart: function () { startPc(); } };
   function startPc() {
     btnStart.disabled = true;
     startCamera($('video'), $('camstatus'), camsel, $('guide'), pcUi, function (text) { if (isPairPayload(text)) return; acceptOnPc(text, 'cam'); })
@@ -3070,7 +3124,7 @@ var qrcode = function() {
     pushHist({ code: r.code, ts: Date.now() });
     if (paired()) sendToPc(r.raw, r.code); else { $('msent').textContent = 'Conecte a um PC (QR ou código) para enviar automaticamente.'; }
   }
-  var mUi = { tools: $('mcamtools'), zoomRow: $('mzoomrow'), zoom: $('mzoom'), zoomV: $('mzoomv') };
+  var mUi = { tools: $('mcamtools'), chips: $('mzoomChips'), restart: function () { startMobile(); } };
   function startMobile() {
     if (cameraBlocked()) return;
     startCamera($('mvideo'), $('mcamstatus'), $('mcamsel'), $('mguide'), mUi, onMobileCode)
