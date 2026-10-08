@@ -1,5 +1,4 @@
-# Leitor de Microchip · Petlove
-
+# Leitor de Microchip
 Protótipo de leitor de código de barras (Code 128) das etiquetas de microchip, para a tela
 *Realizar Microchipagem* da Central. Página única, sem servidor e sem login.
 
